@@ -3,7 +3,7 @@ const prisma = require("../db");
 
 
 //mencari product secara menyeluruh
-const findProduct =  async()=>{
+const findProducts =  async()=>{
     const products = await prisma.product.findMany();
 
     return products;
@@ -60,7 +60,7 @@ const editProduct = async()=>{
 
 module.exports = {
     insertProduct,
-    findProduct,
+    findProducts,
     findProductById,
     deleteProduct,
     editProduct

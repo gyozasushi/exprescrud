@@ -1,108 +1,90 @@
 const express = require("express");
 const prisma = require("../db");
-const { getAllProduct } = require("./product.services");
+const { getAllProducts, getProductById, createProduct, deleteProductById, editProductById } = require("./product.services");
 
 const router = express.Router();
 
-router.get("/",async (req,res)=>{
-    const products = await getAllProduct();
+router.get("/", async (req,res)=>{
+    const products = await getAllProducts();
+    
     res.send(products);
 });
 
 router.get("/:id",async(req,res)=>{
-    const productid = req.params.id;
-    const product = await prisma.product.findUnique({
-        where:{
-            id :parseInt(productid),
-
-        }
-    }); 
-    
-    if(!product){
-        return res.status(400).send("gaada produknya");
+    try {
+        const productById = parseInt(id);
+        const product = await getProductById(parseInt(productid));
+        
+        res.send(product);
+    }catch (err){
+        res.status(400).send(err.message);
     }
 
-    res.send(product);
 });
 
 router.post("/",async(req,res)=>{
-    const newProductData = req.body;
-    
-    const product = await prisma.product.create({
-        data:{
-            name : newProductData.name,
-            description : newProductData.description,
-            image   :  newProductData.image,
-            price   :  newProductData.price
-        }, 
-    });
-    res.send({
-        data:product,
-        message:"ditambahkan coyy"
-    })
+    try{
+        const newProductData = req.body;
+        const product = await createProduct(newProductData);
+
+        res.send({
+            data:product,
+            message : "berhasil ditambahkan coy"
+
+        });
+    }catch(error){
+        res.status(400).send(error.message);
+    }
 });
 
 router.delete("/:id",async(req,res)=>{
-    const productid = req.params.id;
+    try{
+        const productId = req.params.id;
 
-    await prisma.product.delete({
-        where :{
-            id : parseInt(productid),
-        },
-    });
-    res.send("Product dihapus coyyyy")
+        await deleteProductById(parseInt(productId));
+        res.send("ter hapus yahh");
+    }
+    catch(error){
+        res.status(400).send(error.message);
+    }
 });
 
 router.put("/:id",async(req,res)=>{
-    const productid  = req.params.id;
-    const productdata = req.body;
+   const productId = req.params.id;
+   const productData = req.body;
 
     if(
         !(
-            productdata.image && 
-            productdata.name && 
-            productdata.price && 
-            productdata.description
-        )){
-        {
-           return res.send("isilahh");
-        }
+            productData.image &&
+            productData.name &&
+            productData.price &&
+            productData.description
+        )
+    ){
+        return res.status(400).send("gaboleh kosong");
     }
+    const product = await editProductById(parseInt(productId),productData);
 
-    const product = await prisma.product.update({
-        where:{
-            id:parseInt(productid)
-        },data :    {
-            description : productdata.description,
-            name    :   productdata.name,
-            image   :  productdata.image,
-            price   :  productdata.price,
-        }
-    });
     res.send({
-        data:product,
-        message : "waduhh"
-    })
+        data: product,
+        message:"berhasil edit"
+    });
 });
 
 router.patch("/:id",async(req,res)=>{
-    const productid  = req.params.id;
-    const productdata = req.body;
+   try{
+    const productId = req.params.id;
+    const productData = req.body;
 
-    const product = await prisma.product.update({
-        where:{
-            id:parseInt(productid)
-        },data :    {
-            description : productdata.description,
-            name    :   productdata.name,
-            image   :  productdata.image,
-            price   :  productdata.price,
-        }
-    });
+    const product = await editProductById(parseInt(productId),productData);
+
     res.send({
         data:product,
-        message : "waduhh"
+        message:"di edit yahh"
     })
+   }catch(err){
+    res.status(400).send(err.message);
+   }
 });
 
 

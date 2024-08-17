@@ -4,12 +4,12 @@ const {
     deleteProduct,
     editProduct,
     insertProduct,
-    findProduct,
+    findProducts,
     findProductById
 } = require("../product/product.repository")
 
 const getAllProducts = async ()=>{
-    const products = await findProduct();
+    const products = await findProducts();
 
     return products; 
 }
@@ -32,7 +32,7 @@ const createProduct = async(newProductData)=>{
 const deleteProductById = async(id,productdata)=>{
     await getProductById(id);
 
-    const product = await editProduct(id,productdata);
+    const product = await deleteProduct(id,productdata);
     return product;
 }
 
