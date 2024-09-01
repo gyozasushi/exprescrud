@@ -1,23 +1,24 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require('cors');
+
 const app = express();
 
 dotenv.config();
 
 const PORT = process.env.PORT;
+app.use(cors());
+
 app.use(express.json());
 
-app.get("/api",(req,res)=>{
-
-    res.send("selamat datang di api akuh");
-    
+app.get("/api", (req, res) => {
+  res.send("Selamat datang di API akuh");
 });
 
-//import productcontroller
-const productController = require("./product/product.controller") 
-app.use("/products",productController);
+const productController = require("./product/product.controller");
 
+app.use("/products", productController);
 
-app.listen(PORT,()=>{
-    console.log("express running in port " + PORT)
+app.listen(PORT, () => {
+  console.log("Express API running in port: " + PORT);
 });
